@@ -1,46 +1,35 @@
-// import React from "react";
-import { Viewer, pUC } from "./viewer";
+/**
+ * This module is only used for developing seqviz
+ * See viewer.js for the library's entrypoint
+ */
+
+import { Viewer } from "./viewer";
 
 import "./index.css";
 
 // const { whyDidYouUpdate } = require("why-did-you-update");
 // whyDidYouUpdate(React);
 
-const parts = [
-  "KJ668651.1",
-  "BBa_E0040",
-  pUC,
-  "ATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAA",
-  ""
-];
-const part = parts[Math.floor(Math.random() * parts.length)];
+// const parts = [
+//   "KJ668651.1",
+//   "BBa_E0040",
+//   pUC,
+//   "ATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAAATCGAAAAATTTTTGGGGGCCCCCAAAAAGGGGGGAAA",
+//   ""
+// ];
+// let part = parts[Math.floor(Math.random() * parts.length)];
+const part = "KJ668651.1";
 
-const types = ["circular", "linear", "both"];
+// const types = ["circular", "linear", "both"];
+const type = "both";
 
-// Store variable in localStorage for deterministically cycling through exampels
-if (
-  localStorage.getItem("iteration") &&
-  !isNaN(localStorage.getItem("iteration"))
-) {
-  localStorage.setItem(
-    "iteration",
-    (parseInt(localStorage.getItem("iteration")) + 1).toString()
-  );
-} else {
-  localStorage.setItem("iteration", "0");
-}
-
-//const part = parts[localStorage.getItem("iteration") % parts.length];
-const type = types[localStorage.getItem("iteration") % types.length];
-
-const annotate = false;
 const annotations = true;
 const primers = true;
 const complement = true;
 const index = true;
-let viewer = Viewer("app-root", {
+
+const viewerInput = {
   part: part,
-  annotate: annotate,
   viewer: type,
   showAnnotations: annotations,
   showPrimers: primers,
@@ -73,11 +62,18 @@ let viewer = Viewer("app-root", {
     alt: false
   },
   // searchQuery: { query: "GCGGX" },
-  backbone: "pSB1C3",
+  // backbone: "pSB1C3",
   enzymes: [],
   translations: [{ start: 0, end: 89, direction: "FORWARD" }]
-});
+};
+
+let viewer = Viewer("app-root", viewerInput);
 viewer.render();
+
+setTimeout(() => {
+  let viewer = Viewer("app-root", { ...viewerInput, bpColors: {} });
+  viewer.render();
+}, 4000);
 
 /**
  * CODE TO TEST VIEWER WITH FILE IMPORT
@@ -87,14 +83,12 @@ viewer.render();
 // import React from "react";
 // const handleFileUpload = files => {
 //   const type = "both";
-//   const annotate = false;
 //   const annotations = true;
 //   const primers = true;
 //   const complement = true;
 //   const index = true;
 //   console.log(type);
 //   const viewer = VIEWER("app-root", files, {
-//     annotate: annotate,
 //     viewer: type,
 //     showComplement: complement,
 //     showIndex: index,

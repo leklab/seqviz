@@ -8,11 +8,12 @@
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/Lattice-Automation/seqviz?color=green)](https://github.com/Lattice-Automation/seqviz/blob/master/package.json)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Lattice-Automation/seqviz)](https://github.com/Lattice-Automation/seqviz/tree/develop/src)
 
-**Latest Production Build:** <!-- exec-bash(cmd:echo `date`) -->Fri Nov 8 10:04:24 EST 2019<!-- /exec-bash -->
+**Latest Production Build:** <!-- exec-bash(cmd:echo `date`) -->Thu Dec 5 16:37:03 EST 2019<!-- /exec-bash -->
 
 **Maintained by:** <!-- pkg-author(cmd:) -->[Lattice Automation](https://latticeautomation.com/)<!-- /pkg-author -->
 
 <!-- pkg-description(cmd:) -->A framework agnostic DNA viewer for sequences or files (gb, fasta, etc) with auto-feature annotation<!-- /pkg-description -->
+
 <br>
 
 ---
@@ -37,7 +38,8 @@
 
 This package aims to provide basic sequence viewing in a simple, open-source way, for use anywhere that supports running `javascript`. It currently provides:
 
-- **Imports**: For formats that can be displayed by this viewer see viewer options [part input](#part-)
+- **Input**: For formats that can be displayed by this viewer see viewer [input](#input-)
+
 - **Circular Plasmid viewer** :
 
   - Annotations with names and colors
@@ -59,22 +61,17 @@ This package aims to provide basic sequence viewing in a simple, open-source way
   - On both Circular and Linear viewers clicking on an annotation or dragging over a section of the viewer will create a selection
   - Information about this selection will be available through the `onSelection()` option (see [viewer options](#vieweroptions-))
 
-- **Off-line Viewing**: While the library is intended to be used with web applications on the internet it does support use without an internet connection. Offline viewing requires that you load the library source code from a local copy.
-  - Auto-annotation is **not** available while off-line
-  - Sequences loaded as objects or strings **will** be available for viewing while off-line
-  - Once a part has been fetched from NCBI or iGem it will be cached in your browser in a cookie with the accession id as the name. As long as you have that cookie, the part **will** be available for viewing off-line (see [Caching](https://github.com/Lattice-Automation/seqviz/wiki/Caching) for more details).
-
 ## Using the Library
 
 ### Installation
 
-The library source code is in a file named <!-- pkg-file(cmd:) -->`seqviz.min.js`<!-- /pkg-file -->. You can either extract this from the [GitHub release](https://github.com/Lattice-Automation/seqviz/releases) tarball or download it from our CDN at <!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/0.5.1/seqviz.min.js`<!-- /dist-url -->.
+The library source code is in a file named <!-- pkg-file(cmd:) -->`seqviz.min.js`<!-- /pkg-file -->. You can either extract this from the [GitHub release](https://github.com/Lattice-Automation/seqviz/releases) tarball or download it from our CDN at <!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/0.5.5/seqviz.min.js`<!-- /dist-url -->.
 
-You will want to import the library in your top level `index.html` (or whichever is the entry point of your website).
+You will want to import the library in your top level `index.html` (or whatever is the entry point of your website).
 
 For example you can use:
 
-`<script src="`<!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/0.5.1/seqviz.min.js`<!-- /dist-url -->`"></script>`
+`<script src="`<!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/0.5.5/seqviz.min.js`<!-- /dist-url -->`"></script>`
 
 This method requires no actual download. You will be served the library directly from our CDN. This method, however, does require you to have internet access in order to use the library.
 
@@ -127,13 +124,13 @@ The `viewer` is an object with three fields.
 
 The library is built with [React.js](https://reactjs.org/). `viewer.viewer` will return the `React` component for the viewer so that you can render it yourself.
 
-#### `viewer.viewerHTML`
-
-This will return the `HTML` for the viewer if you want to render the viewer yourself. This is a trial feature and may not be sufficient information for a renderer to render the viewer.
-
 #### `viewer.render()`
 
 This renders the viewer using `ReactDOM`(which is packaged with the library so you do not need to have it installed locally).
+
+#### `viewer.renderToString()`
+
+This will return the `HTML` for the viewer if you want to render the viewer yourself. A call to `[ReactDOMServer.renderToString](https://reactjs.org/docs/react-dom-server.html)`.
 
 ### Viewer Constructor
 
@@ -151,7 +148,6 @@ There are no defaults values for this option. An element input is minimally nece
 ```js
 const {
   part = "KJ668651.1" || "BBa_E0040" || PUC || "ATCG", // part input
-  annotate = true || false, // whether or not to use our lambda auto-annotate
   viewer = "circular" || "linear" || "both", // type of viewer to show
   showAnnotations = true || false, // whether or not to show annotations
   showComplement = true || false, // whether or not to show complement strand
@@ -185,7 +181,7 @@ const {
 } = viewerOptions;
 ```
 
-#### `part`
+#### `input`
 
 - NCBI accession number (`string`)
 - BioBrick accession number (`string`)
@@ -217,12 +213,6 @@ const {
 ```
 
 There are no default values for this option. A part input is minimally necessary to initialize a viewer and use this library.
-
-#### `annotate`
-
-`boolean` **true** or **false**. If true will try to connect to Lattice's BLAST endpoint to find annotations for the imported part. Requires internet connection. Needs to be turned on (**true**) in order to see BioBrick prefixes and suffixes.
-
-Defaults to **false**.
 
 #### `viewer`
 
@@ -529,7 +519,3 @@ or contact <!-- pkg-bug-email(cmd:) -->[contact@latticeautomation.com](contact@l
 See [Running in Development Mode](https://github.com/Lattice-Automation/seqviz/wiki/Running-in-Development-Mode), [CONTRIBUTING](https://github.com/Lattice-Automation/seqviz/blob/master/CONTRIBUTING.md), and [CODE_OF_CONDUCT](https://github.com/Lattice-Automation/seqviz/blob/master/CODE_OF_CONDUCT.md)
 
 Here are some good guidelines to get started with contributing: [Contributing to Open Source](https://medium.com/@jenweber/your-first-open-source-contribution-a-step-by-step-technical-guide-d3aca55cc5a6).
-
-## License
-
-[MIT](https://github.com/Lattice-Automation/seqviz/blob/master/LICENSE)

@@ -1,20 +1,17 @@
 import { isEqual } from "lodash";
 import * as React from "react";
-import request from "request";
-import shortid from "shortid";
 
 import SeqViewer from "./SeqViewer/SeqViewer";
 import "./PartExplorer.scss";
-import { annotationFactory, defaultSelection } from "../utils/sequence";
-import { directionality } from "../utils/parser";
+import { defaultSelection } from "../utils/sequence";
 import processPartInput from "../io/processPartInput";
 
 /**
  * a container for investigating the meta and sequence information of a part
  */
-class PartExplorer extends React.Component {
+export default class PartExplorer extends React.Component {
   state = {
-    seqSelection: defaultSelection,
+    seqSelection: { ...defaultSelection },
     findState: {
       searchResults: [],
       searchIndex: 0
@@ -24,11 +21,14 @@ class PartExplorer extends React.Component {
     part: {}
   };
 
-  createPart = async (newPart = false) => {
-    const { part: partInput, annotate, colors, backbone } = this.props;
-    let part = await processPartInput(newPart, partInput, { colors, backbone });
-    part = annotate ? await this.autoAnnotate(part, colors) : part;
-    this.setState({ part: part });
+  createPart = async () => {
+    const { part: partInput, colors, backbone } = this.props;
+
+    let part = await processPartInput(partInput, { colors, backbone });
+
+    if (part) {
+      this.setState({ part });
+    }
   };
 
   addKeyBindings = () => {
@@ -141,7 +141,6 @@ class PartExplorer extends React.Component {
   componentDidUpdate = async prevProps => {
     const {
       part: partInput,
-      annotate,
       colors,
       backbone,
       zoom: { circular: czoom, linear: lzoom },
@@ -150,7 +149,6 @@ class PartExplorer extends React.Component {
 
     const {
       part: prevPart,
-      annotate: prevAnnotate,
       colors: prevColors,
       backbone: prevBackbone,
       zoom: { circular: prevCzoom, linear: prevLzoom },
@@ -159,7 +157,6 @@ class PartExplorer extends React.Component {
 
     if (
       partInput !== prevPart ||
-      annotate !== prevAnnotate ||
       backbone !== prevBackbone ||
       colors !== prevColors ||
       czoom !== prevCzoom ||
@@ -209,81 +206,6 @@ class PartExplorer extends React.Component {
     }
   };
 
-  /**
-   * Send a POST to lattice's AWS Lambda auto-annotate endpoint
-   */
-  lambdaAnnotate = async part => {
-    const result = await new Promise((resolve, reject) => {
-      request.post(
-        {
-          uri: "https://microservices.latticeautomation.com/annotate",
-          method: "POST",
-          json: JSON.stringify({
-            id: shortid.generate(),
-            seq: part.seq.toLowerCase()
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        },
-        (err, resp) => {
-          if (err) {
-            console.log("Error with automatic annotation: ", err);
-            return reject(err);
-          }
-          return resolve(resp.toJSON());
-        }
-      );
-    });
-
-    if (result.statusCode !== 200) {
-      const err = JSON.stringify(result.body);
-      throw new Error(`Lambda annotations failed. Server response: ${err}`);
-    }
-    return result;
-  };
-
-  /**
-   * A function for adding annotations automatically given a part's sequence alone.
-   * Calls a remote lambda service which uses BLAST and a pre-populated feature database
-   */
-  autoAnnotate = async (part, colors = []) => {
-    let result;
-    try {
-      if (navigator.onLine) {
-        // make the call
-        result = await this.lambdaAnnotate(part);
-      } else {
-        throw new Error(
-          `It looks like you wanted to annotate your part, but could not connect to our BLAST endpoint. Please check that you have a stable network connection.`
-        );
-      }
-    } catch (error) {
-      console.error(error.message);
-      return error;
-    }
-    let annotations = result.body.annotations.map(a => ({
-      ...annotationFactory(a.name || a.start),
-      ...a,
-      ...{ direction: directionality(a.direction) }
-    }));
-
-    // add only annotations that don't already exist on the part with the same name and start/end
-    // do not concat and globally cull duplicates, we want to deduplicate features
-    annotations = annotations.reduce((acc, a) => {
-      if (
-        !acc.find(
-          ann =>
-            ann.name === a.name && ann.start === a.start && ann.end === a.end
-        )
-      ) {
-        return acc.concat(a);
-      }
-      return acc;
-    }, part.annotations);
-    return { ...part, annotations };
-  };
-
   render() {
     const { viewer } = this.props;
     const { part } = this.state;
@@ -330,5 +252,3 @@ class PartExplorer extends React.Component {
     );
   }
 }
-
-export default PartExplorer;
