@@ -1,7 +1,7 @@
 {
   "name": "seqviz",
-  "version": "0.5.5",
-  "description": "A framework agnostic DNA viewer for sequences or files (gb, fasta, etc) with auto-feature annotation",
+  "version": "0.6.0",
+  "description": "DNA sequence viewer supporting custom, GenBank, FASTA, NCBI accession, and iGEM part input",
   "keywords": [
     "seqviz",
     "DNA",
@@ -36,7 +36,6 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-sizeme": "^2.6.4",
-    "request": "^2.88.0",
     "shortid": "^2.2.14",
     "tinycolor2": "^1.4.1",
     "xml2js": "^0.4.19"
