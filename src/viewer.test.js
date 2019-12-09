@@ -10,8 +10,8 @@ const defaultOptions = {
   zoom: { linear: 50 },
   bpColors: { A: "#FFF" },
   colors: [],
-  onSelection: selection => {},
-  onSearch: results => {},
+  onSelection: () => {},
+  onSearch: () => {},
   searchNext: {
     key: "a",
     meta: false,
@@ -26,7 +26,7 @@ const defaultOptions = {
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
-  let viewer = Viewer(div, { ...defaultOptions, part: PUC });
+  let viewer = Viewer(div, { ...defaultOptions, ...PUC });
 
   viewer.render();
 });
@@ -35,7 +35,7 @@ it("renders while querying an iGEM part", () => {
   const div = document.createElement("div");
   let viewer = Viewer(div, {
     ...defaultOptions,
-    part: "BBa_E0040",
+    part: "BBa_K1598008",
     backbone: "pSB1C3"
   });
 
@@ -44,7 +44,7 @@ it("renders while querying an iGEM part", () => {
 
 it("updates props with setState", () => {
   const div = document.createElement("div");
-  let viewer = Viewer(div, { ...defaultOptions, part: PUC });
+  let viewer = Viewer(div, { ...defaultOptions, ...PUC });
 
   viewer.render();
 

@@ -3,11 +3,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactDOMServer from "react-dom/server";
 
-import PartExplorer from "./PartExplorer/PartExplorer.jsx";
+import SeqViz from "./SeqViz/SeqViz.jsx";
 import "./viewer.scss";
 
 /**
- * Export a default part, pUC, for development
+ * Export a React component directly for React-based development
+ */
+export { SeqViz };
+
+/**
+ * Export a part, pUC, for development
  */
 export { default as pUC } from "./parts/pUC";
 
@@ -15,46 +20,9 @@ export { default as pUC } from "./parts/pUC";
  * Return an object with a `viewer` (React component), `viewerHTML` (HTML string),
  * and a `render` function for rendering the viewer to the `element`
  *
- * @param {ViewerOptions} viewerOptions - The {ViewerOptions} for the viewer
+ * @param {ViewerOptions} options - The {ViewerOptions} for the viewer
  */
-export const Viewer = (element = "root", viewerOptions) => {
-  let options = {
-    backbone: "",
-    bpColors: {},
-    colors: [],
-    copySeq: {
-      key: "",
-      meta: false,
-      ctrl: false,
-      shift: false,
-      alt: false
-    },
-    enzymes: [],
-    onSearch: results => {
-      return results;
-    },
-    onSelection: selection => {
-      return selection;
-    },
-    part: null,
-    searchNext: {
-      key: "",
-      meta: false,
-      ctrl: false,
-      shift: false,
-      alt: false
-    },
-    searchQuery: { query: "", mismatch: 0 },
-    showAnnotations: true,
-    showComplement: true,
-    showIndex: true,
-    showPrimers: true,
-    translations: [],
-    viewer: "both",
-    zoom: { circular: 0, linear: 50 },
-    ...viewerOptions
-  };
-
+export const Viewer = (element = "root", options) => {
   // used to keep track of whether to re-render after a "set" call
   let rendered = false;
   // get the HTML element by ID or use as is if passed directly
@@ -63,14 +31,14 @@ export const Viewer = (element = "root", viewerOptions) => {
     element.constructor.name.endsWith("Element")
       ? element
       : document.getElementById(element);
-  let viewer = React.createElement(PartExplorer, options, null);
+  let viewer = React.createElement(SeqViz, options, null);
 
   /**
    * Render the Viewer to the element passed
    */
   const render = () => {
     rendered = true;
-    return ReactDOM.render(viewer, domElement);
+    ReactDOM.render(viewer, domElement);
   };
 
   /**
@@ -95,10 +63,10 @@ export const Viewer = (element = "root", viewerOptions) => {
     });
 
     options = { ...options, ...state };
-    viewer = React.createElement(PartExplorer, options, null);
+    viewer = React.createElement(SeqViz, options, null);
 
     if (rendered) {
-      return ReactDOM.render(viewer, domElement);
+      ReactDOM.render(viewer, domElement);
     }
   };
 
