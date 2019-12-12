@@ -1,14 +1,14 @@
-<p align="center">
-  <img height="120" src="https://github.com/Lattice-Automation/seqviz/blob/develop/demo/src/seqviz-brand-small.png">
-</p>
+<div align="center">
+  <img height="110" src="https://imgur.com/rkJ1irF.png">
+</div>
+
 &nbsp;
 
 [![David](https://img.shields.io/david/Lattice-Automation/seqviz)](https://david-dm.org/Lattice-Automation/seqviz)
 [![GitHub](https://img.shields.io/github/license/Lattice-Automation/seqviz)](https://github.com/Lattice-Automation/seqviz/blob/master/LICENSE)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/Lattice-Automation/seqviz?color=green)](https://github.com/Lattice-Automation/seqviz/blob/master/package.json)
-[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Lattice-Automation/seqviz)](https://github.com/Lattice-Automation/seqviz/tree/develop/src)
 
-**Latest Production Build:** <!-- exec-bash(cmd:echo `date`) -->Wed Dec 11 16:31:34 EST 2019<!-- /exec-bash -->
+**Latest Production Build:** <!-- exec-bash(cmd:echo `date`) -->Thu Dec 12 18:49:00 EST 2019<!-- /exec-bash -->
 
 **Maintained by:** <!-- pkg-author(cmd:) -->[Lattice Automation](https://latticeautomation.com/)<!-- /pkg-author -->
 
@@ -18,19 +18,19 @@
 
 ---
 
-![](seqviz-feature-highlights.gif)
+<div align="center">
+  <img width="675" src="https://media.giphy.com/media/KH8oxeI0eeu4rpAi0O/giphy.gif">
+</div>
 
 ---
 
 - [Key Features](#key-features)
 - [Using the Library](#using-the-library)
   - [Installation](#installation)
-  - [Usage](#usage)
-  - [Viewer Configuration](#ViewerConfig)
+  - [Instantiation](#instantiation)
+  - [Configuration](#configuration)
 - [Library Demo](#library-demo)
 - [Contact Us](#contact-us)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -63,36 +63,28 @@ This package aims to provide basic sequence viewing in a simple, open-source way
 
 ### Installation
 
-The library source code is in a file named <!-- pkg-file(cmd:) -->`seqviz.min.js`<!-- /pkg-file -->. You can either extract this from the [GitHub release](https://github.com/Lattice-Automation/seqviz/releases) tarball or download it from our CDN at <!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/1.0.2/seqviz.min.js`<!-- /dist-url -->.
+#### npm
 
-You will want to import the library in your top level `index.html` (or whatever is the entry point of your website).
-
-For example you can use:
-
-`<script src="`<!-- dist-url(cmd:) -->`https://cdn.latticeautomation.com/libs/seqviz/1.0.2/seqviz.min.js`<!-- /dist-url -->`"></script>`
-
-This method requires no actual download. You will be served the library directly from our CDN. This method, however, does require you to have internet access in order to use the library.
-
-If you want to load the library locally and be able to view cached parts without internet connection you can download the source file to the same folder as your `index.html` and use:
-
-```html
-<script src="seqviz.min.js"></script>
+```bash
+npm install seqviz --save
 ```
 
-If you are using [Create React App](https://github.com/facebook/create-react-app) and have the source code stored in your public folder you can use:
+#### CDN
 
+<!-- cdn-example(cmd:) -->
 ```html
-<script src="%PUBLIC_URL%/seqviz.min.js"></script>
+<script src="https://cdn.latticeautomation.com/libs/seqviz/1.0.23/seqviz.min.js"></script>
 ```
+<!-- /cdn-example -->
 
-### Usage
+### Instantiation
 
-You can initialize a viewer with React or vanilla-JS.
+You can instantiate a viewer via React or Vanilla JS.
 
-React, via the `Seqviz` component:
+React, with the `Seqviz` component:
 
 ```jsx
-const { SeqViz } = window.seqviz;
+import { SeqViz } from "seqviz";
 
 const CustomViewer = () => (
   <SeqViz
@@ -103,12 +95,11 @@ const CustomViewer = () => (
 );
 ```
 
-JavaScript, via the `Viewer` constructor:
+JavaScript, with the `Viewer` constructor (default export):
 
 ```html
 <script>
-  const seqviz = window.seqviz;
-  seqviz
+  window.seqviz
     .Viewer("root", {
       name: "L09136",
       seq: "tcgcgcgtttcggtgatgacggtgaaaacctctgacacatgca"
@@ -128,15 +119,15 @@ The Viewer returns an object with three properties:
 
 - `viewer.render()` -- renders the viewer to the DOM at the node passed in `${element}`
 - `viewer.renderToString()` -- renders the viewer and returns as an HTML string
-- `viewer.setState(ViewerConfig)` -- update the viewer's settings and re-renders
+- `viewer.setState(ViewerConfig)` -- update the viewer's configuration and re-renders
 
-#### ViewerConfig
+#### Configuration
 
 All the following are usable with both the React implementation (as props) and the JS implementation as properties in a `ViewerConfig` object passed to the `Viewer` constructor.
 
 One of the below is required:
 
-- `seq` (_string_) a manual specification of the sequence to render
+- `seq` (_string_) the DNA sequence to render
 - `accession` (_string_) an NCBI accession ID or iGEM part ID
   - populates `name`, `seq`, and `annotations`
 - `file` ([_File_](https://developer.mozilla.org/en-US/docs/Web/API/File)) a File object (FASTA, Genbank, SnapGene, SBOL)
@@ -151,10 +142,12 @@ Simple optional configuration options:
 - `showAnnotations` (_boolean_) whether to show annotations
 - `showIndex` (_boolean_) whether to show the index line and ticks below the sequence
 - `enzymes` (_\[string\]_) a list of restriction enzymes whose recognition sites should be shown
-- `zoom` how zoomed the viewer(s) should be `0-100`. map from viewer type to zoom level. default:
-  `{ linear: 50, circular: 0 }`
-- `bpColors` (_{\[string\]: string}_) map from bp to color. example:
-  `{ A: "#FF0" T: "#00F" }`
+  - example: `["PstI", "EcoRI"]`
+- `bpColors` (_{\[string\]: string}_) map from bp to color.
+  - example: `{ A: "#FF0" T: "#00F" }`
+- `zoom` how zoomed the viewer(s) should be `0-100`
+  - map from viewer type to zoom level.
+    - default: `{ linear: 50, circular: 0 }`
 
 Additional configuration is below:
 
@@ -192,7 +185,7 @@ Example for a random drag selection
   "ref": "",
   "sequenceMeta": {
     "sequence": "aggcggtttgcgtattgggcgctcttccgcttcctcgctcactgactcgctgcgctcggtcgttcggctgcggcgagcggtatcagctcactcaaaggcggtaatacggttatccacagaatcaggggataacgcaggaaagaacatgtgagcaaaaggccagcaaaaggccaggaaccgtaaaaaggccgcgttgctggcgtttttccataggctccgcccccctgacgagcatcacaaaaatcgacgctcaagtcagaggtggcgaaacccgacaggactataaagataccaggcgtttccccctggaagctccctcgtgcgctctcctgttccgaccctgccgcttaccggatacctgtccgcctttctcccttcgggaagcgtggcgctttctcatagctcacgctgtaggtatctcagttcggtgtaggtcgttcgctccaagctgggctgtgtgcacgaaccccccgttcagcccgaccgctgcgccttatccggtaactatcgtcttgagtccaacccggtaagacacgacttatcgccactggcagcagccactggtaacaggattagcagagcgaggtatgtaggcggtgctacagagttcttgaagtggtggcctaactacggctacactagaaggacagtatttggtatctgcgctctgctgaagccagttaccttcggaaaaagagttggtagctcttgatccggcaaacaaaccaccgctggtagcggtggtttttttgtttgcaagcagcagattacgcgcagaaaaaaaggatctcaagaagatcctttgatcttttctacggggtctgacgctcagtggaacgaaaactcacgttaagggattttggtcatgagattatcaaaaaggatcttcacctagatccttttaaattaaaaatgaagttttaaatcaatctaaagtatatatgagtaaacttggtctgacagttaccaatgcttaa",
-    "GC": 51.074718526100305,
+    "GC": 51.1,
     "Tm": 85
   },
   "selectionMeta": {
@@ -212,7 +205,7 @@ If the selection is an annotation (generated by clicking on an annotation) there
   "ref": "lxcC1L3M4z",
   "sequenceMeta": {
     "sequence": "ctatgcggcatcagagcagattgtactgagagtgcaccatatgcggtgtgaaataccgcacagatgcgtaaggagaaaataccgcatcaggcgccattcgccattcaggctgcgcaactgttgggaagggcgatcggtgcgggcctcttcgctattacgccagctggcgaaagggggatgtgctgcaaggcgattaagttgggtaacgccagggttttcccagtcacgacgttgtaaaacgacggccagtgccaagcttgcatgcctgcaggtcgactctagaggatccccgggtaccgagctcgaattcgtaatcatggtcat",
-    "GC": 55.24691358024691,
+    "GC": 55.3,
     "Tm": 85
   },
   "selectionMeta": {
@@ -378,20 +371,10 @@ You can see a demonstration of this library used to fetch BioBricks at
 
 For developers, the demo source code is at [seqviz/demo](https://github.com/Lattice-Automation/seqviz/tree/master/demo/README.md).
 
-For a simpler start up, there is an HTML demo which only requires additions to the `index.html` to get started. See [seqviz/demo/simple-ui/index.html](https://github.com/Lattice-Automation/seqviz/tree/master/demo/simple-ui/public/index.html).
-
 You can also check out the example for examining NCBI parts included in our SeqViz introductory [Medium post](https://medium.com/lattice-automation/visualize-your-dna-sequences-with-seqviz-b1d945eb9684).
 
 ## Contact Us
 
 This library is currently being maintained by <!-- pkg-author(cmd:) -->[Lattice Automation](https://latticeautomation.com/)<!-- /pkg-author -->.
 
-You can report bugs at <!-- pkg-bug-url(cmd:) -->[Issues](https://github.com/Lattice-Automation/seqviz/issues)<!-- /pkg-bug-url -->
-
-or contact <!-- pkg-bug-email(cmd:) -->[contact@latticeautomation.com](contact@latticeautomation.com)<!-- /pkg-bug-email -->
-
-## Contributing
-
-See [Running in Development Mode](https://github.com/Lattice-Automation/seqviz/wiki/Running-in-Development-Mode), [CONTRIBUTING](https://github.com/Lattice-Automation/seqviz/blob/master/CONTRIBUTING.md), and [CODE_OF_CONDUCT](https://github.com/Lattice-Automation/seqviz/blob/master/CODE_OF_CONDUCT.md)
-
-Here are some good guidelines to get started with contributing: [Contributing to Open Source](https://medium.com/@jenweber/your-first-open-source-contribution-a-step-by-step-technical-guide-d3aca55cc5a6).
+You can report bugs at <!-- pkg-bug-url(cmd:) -->[Issues](https://github.com/Lattice-Automation/seqviz/issues)<!-- /pkg-bug-url --> or contact <!-- pkg-bug-email(cmd:) -->[contact@latticeautomation.com](contact@latticeautomation.com)<!-- /pkg-bug-email -->
